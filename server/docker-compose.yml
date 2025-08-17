@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:6.0
+    container_name: robot_mongo
+    restart: always
+    ports:
+      - '27017:27017'
+    volumes:
+      - ./data/mongo:/data/db
+
+  server:
+    build: ./server
+    container_name: robot_server
+    restart: always
+    ports:
+      - '4000:4000'
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/robot_logs
+    depends_on:
+      - mongo
+    volumes:
+      - ./server:/app
+      - /app/node_modules
