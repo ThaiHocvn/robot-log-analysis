@@ -1,14 +1,13 @@
+import { log } from 'console'
 import { Router } from 'express'
-import { getAllLogs, getLog } from '~/controllers/log.controllers'
-import { getLogsValidator, paginationValidator } from '~/middlewares/logs.middlewares'
+import logControllers from '~/controllers/log.controllers'
+import { paginationValidator } from '~/middlewares/logs.middlewares'
 import { wrapRequestHandler } from '~/utils/handlers'
 
 const logsRouter = Router()
 
-logsRouter.get('/', paginationValidator, wrapRequestHandler(logController.getAllLogs))
-logsRouter.get('/:id', wrapRequestHandler(logController.getLogById))
-logsRouter.post('/', wrapRequestHandler(logController.createLog))
-logsRouter.put('/:id', wrapRequestHandler(logController.updateLog))
-logsRouter.delete('/:id', wrapRequestHandler(logController.deleteLog))
+logsRouter.post('/', paginationValidator, wrapRequestHandler(logControllers.getLogSummary))
+logsRouter.get('/organizations', wrapRequestHandler(logControllers.getOrganizations))
+logsRouter.post('/sessions', paginationValidator, wrapRequestHandler(logControllers.getSessionLogs))
 
 export default logsRouter

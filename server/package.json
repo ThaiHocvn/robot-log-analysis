@@ -3,13 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "NODE_ENV=development npx nodemon",
-    "dev:stag": "NODE_ENV=staging npx nodemon",
-    "dev:prod": "NODE_ENV=production npx nodemon",
+    "dev": "npx nodemon",
     "build": "rimraf ./dist && tsc && tsc-alias",
-    "start:dev": "NODE_ENV=development node dist/index.js",
-    "start:stag": "NODE_ENV=staging node dist/index.js",
-    "start:prod": "NODE_ENV=production  node dist/index.js",
+    "start:dev": " node dist/index.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "prettier": "prettier --check .",
@@ -33,6 +29,7 @@
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
     "mongodb": "^6.18.0",
+    "node-cache": "^5.1.2",
     "socket.io": "^4.8.1"
   },
   "devDependencies": {

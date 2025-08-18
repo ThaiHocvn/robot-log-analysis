@@ -1,64 +1,56 @@
-// controllers/log.controller.ts
 import { Request, Response, NextFunction } from 'express'
-import { LogService } from '~/services/logs.services'
+import logService from '~/services/logs.services'
 
 class LogController {
-  private logService: LogService
-
-  constructor() {
-    this.logService = new LogService()
-  }
-
-  async createLog(req: Request, res: Response, next: NextFunction) {
+  async getLogSummary(req: Request, res: Response, next: NextFunction) {
     try {
-      const log = await this.logService.createLog(req.body)
-      res.status(201).json(log)
+      const { startDate, endDate, organizationId, limit, page } = req.body
+
+      const numLimit = Number(limit) || 10
+      const numPage = Number(page) || 1
+      const defaultOrganizationId = 'All'
+
+      const result = await logService.getLogSummaryData(
+        startDate as string,
+        endDate as string,
+        (organizationId as string) || defaultOrganizationId,
+        numLimit,
+        numPage
+      )
+
+      res.json({
+        message: 'Get log summary data successfully',
+        data: result
+      })
     } catch (error) {
       next(error)
     }
   }
 
-  async getAllLogs(req: Request, res: Response, next: NextFunction) {
+  async getOrganizations(req: Request, res: Response, next: NextFunction) {
     try {
-      const { page = 1, limit = 10 } = req.query
-      const logs = await this.logService.getAllLogs(Number(page), Number(limit))
-      res.json(logs)
+      const { startDate, endDate } = req.query
+      const organizations = await logService.getOrganizations(startDate as string, endDate as string)
+      res.json({
+        message: 'Get successful organization list',
+        data: organizations
+      })
     } catch (error) {
       next(error)
     }
   }
 
-  async getLogById(req: Request, res: Response, next: NextFunction) {
+  async getSessionLogs(req: Request, res: Response, next: NextFunction) {
     try {
-      const log = await this.logService.getLogById(req.params.id)
-      if (!log) {
-        return res.status(404).json({ message: 'Log not found' })
-      }
-      res.json(log)
-    } catch (error) {
-      next(error)
-    }
-  }
+      const { sessionId, limit, page, filterAbnormal } = req.body
 
-  async updateLog(req: Request, res: Response, next: NextFunction) {
-    try {
-      const log = await this.logService.updateLog(req.params.id, req.body)
-      if (!log) {
-        return res.status(404).json({ message: 'Log not found' })
-      }
-      res.json(log)
-    } catch (error) {
-      next(error)
-    }
-  }
-
-  async deleteLog(req: Request, res: Response, next: NextFunction) {
-    try {
-      const result = await this.logService.deleteLog(req.params.id)
-      if (!result) {
-        return res.status(404).json({ message: 'Log not found' })
-      }
-      res.json({ message: 'Log deleted successfully' })
+      const numLimit = Number(limit) || 10
+      const numPage = Number(page) || 1
+      const organizations = await logService.getSessionLogs(sessionId as string, filterAbnormal, numLimit, numPage)
+      res.json({
+        message: 'Get successful session logs',
+        data: organizations
+      })
     } catch (error) {
       next(error)
     }
